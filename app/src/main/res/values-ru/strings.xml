@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="latest">Последние</string>
+    <string name="best">Лучшие</string>
+    <string name="hot">Горячие</string>
+    <string name="back">Назад</string>
+    <string name="next">Вперед</string>
+</resources>
