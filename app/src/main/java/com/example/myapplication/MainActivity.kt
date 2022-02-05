@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import com.google.android.material.tabs.TabLayout
@@ -39,6 +40,17 @@ class MainActivity : AppCompatActivity(), ReloadCallback {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab == null) return
                 Toast.makeText(applicationContext, "Tab ${tab.position} selected - It works!", Toast.LENGTH_SHORT).show()
+
+                // Option 1: handle stack of tabLayout indexes for correct undo + error fragment
+                // Handle error fragment
+//                val lastFragment = supportFragmentManager.fragments.lastOrNull()
+//                if (lastFragment != null && lastFragment is ErrorFragment) {
+//                    supportFragmentManager.popBackStack()
+//                }
+
+                // Option 2: Erase all fragments on changing category
+                supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
                 loadImage()
             }
 
@@ -47,7 +59,7 @@ class MainActivity : AppCompatActivity(), ReloadCallback {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                onTabSelected(tab)
+                // Nothing to do
             }
         })
 
@@ -70,5 +82,13 @@ class MainActivity : AppCompatActivity(), ReloadCallback {
             add<MainFragment>(R.id.fragmentContainer, args = bundle)
             addToBackStack(null)
         }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.fragments.count() == 1) {
+            supportFragmentManager.popBackStack()
+        }
+
+        super.onBackPressed()
     }
 }
