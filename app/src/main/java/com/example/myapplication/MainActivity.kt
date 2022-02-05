@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -10,7 +11,7 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import com.google.android.material.tabs.TabLayout
 
-class MainActivity : AppCompatActivity(), ReloadCallback {
+class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback {
     private lateinit var backButton: ImageButton
     private lateinit var forwardButton: ImageButton
     private lateinit var tabLayout: TabLayout
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity(), ReloadCallback {
         forwardButton.setOnClickListener {
             // ToDO
             Toast.makeText(applicationContext, "Forward - It works!", Toast.LENGTH_SHORT).show()
+            loadImage()
         }
 
         // Setup tabs
@@ -75,6 +77,9 @@ class MainActivity : AppCompatActivity(), ReloadCallback {
 
     override fun loadImage() {
         // Setup fragment container
+        findViewById<ImageButton>(R.id.forwardButton).visibility = View.VISIBLE
+        findViewById<ImageButton>(R.id.backButton).visibility = View.VISIBLE
+
         val bundle = bundleOf("category_id" to tabLayout.selectedTabPosition)
 
         supportFragmentManager.commit {
@@ -91,4 +96,16 @@ class MainActivity : AppCompatActivity(), ReloadCallback {
 
         super.onBackPressed()
     }
+
+    override fun hideButtons() {
+        backButton.visibility = View.INVISIBLE
+        forwardButton.visibility = View.INVISIBLE
+    }
+
+    override fun showButtons() {
+        backButton.visibility = View.VISIBLE
+        forwardButton.visibility = View.VISIBLE
+    }
+
+
 }
