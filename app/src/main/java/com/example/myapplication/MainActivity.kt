@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,5 +20,17 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.forwardButton).setOnClickListener {
             Toast.makeText(applicationContext, "Forward - It works!", Toast.LENGTH_LONG).show()
         }
+
+        // Setup fragment container
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add<MainFragment>(R.id.fragmentContainer)
+        }
+
+        // ToDO:
+        //  - Button support
+        //  - Button disabling
+        //  - API support and drawing
+        //  - Error handling
     }
 }
