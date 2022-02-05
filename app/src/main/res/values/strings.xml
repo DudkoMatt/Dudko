@@ -2,7 +2,7 @@
     <string name="app_name">My Application</string>
     <string name="developers_life" translatable="false">Developers Life</string>
     <string name="profile_image" translatable="false">Profile Image</string>
-    <string name="best">Best</string>
+    <string name="top">Top</string>
     <string name="hot">Hot</string>
     <string name="latest">Latest</string>
     <string name="main_image" translatable="false">Main Image</string>

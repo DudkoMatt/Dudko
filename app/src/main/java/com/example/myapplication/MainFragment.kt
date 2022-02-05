@@ -3,10 +3,12 @@ package com.example.myapplication
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
@@ -32,8 +34,8 @@ class MainFragment: Fragment(R.layout.main_fragment) {
 
     enum class Categories {
         LATEST,
-        BEST,
-        HOT
+        TOP,
+        HOT  // Not working - empty response from backend
     }
 
     override fun onAttach(context: Context) {
@@ -65,6 +67,8 @@ class MainFragment: Fragment(R.layout.main_fragment) {
                 try {
                     loadImage(response)
                 } catch (e: Exception) {
+                    Log.d("Tinkoff-lab", "main -> glide -> error: ${e.message}")
+                    Toast.makeText(context, "Error occurred: ${e.message}", Toast.LENGTH_LONG).show()
                     onLoadingError()
                 } finally {
                     blockForwardButtonCallback.enableForwardButton()
@@ -72,6 +76,8 @@ class MainFragment: Fragment(R.layout.main_fragment) {
             },
             {
                 blockForwardButtonCallback.enableForwardButton()
+                Log.d("Tinkoff-lab", "main -> glide -> error: ${it.message}")
+                Toast.makeText(context, "Error occurred: ${it.message}", Toast.LENGTH_LONG).show()
                 onLoadingError()
             }
         )
@@ -83,8 +89,8 @@ class MainFragment: Fragment(R.layout.main_fragment) {
         var url = "https://developerslife.ru/"
         url += when (Categories.values()[requireArguments().getInt("category_id")]) {
             Categories.LATEST -> "latest"
-            Categories.BEST -> "daily"
-            Categories.HOT -> "hot"
+            Categories.TOP -> "top"
+            Categories.HOT -> "hot"  // Not working
         }
         url += "/"
         url += Random.nextInt(1000).toString()
