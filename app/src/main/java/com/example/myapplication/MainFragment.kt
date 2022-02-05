@@ -1,22 +1,26 @@
 package com.example.myapplication
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlin.random.Random
 
 class MainFragment: Fragment(R.layout.main_fragment) {
@@ -24,10 +28,19 @@ class MainFragment: Fragment(R.layout.main_fragment) {
     private lateinit var mainImage: ImageView
     private lateinit var mainText: TextView
 
+    private lateinit var blockForwardButtonCallback: BlockForwardButtonDuringLoad
+
     enum class Categories {
         LATEST,
         BEST,
         HOT
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is BlockForwardButtonDuringLoad) {
+            blockForwardButtonCallback = context
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,6 +48,7 @@ class MainFragment: Fragment(R.layout.main_fragment) {
         mainImage = requireView().findViewById(R.id.mainImage)
         mainText = requireView().findViewById(R.id.mainText)
 
+        blockForwardButtonCallback.disableForwardButton()
         main()
     }
 
@@ -42,28 +56,27 @@ class MainFragment: Fragment(R.layout.main_fragment) {
         showProgressBar()
 
         val url = getUrl()
-        Toast.makeText(context, url, Toast.LENGTH_SHORT).show()  // ToDO: remove
         val queue = Volley.newRequestQueue(context)
 
         val stringRequest = StringRequest(
             Request.Method.GET,
             url,
             { response ->
-                mainText.text = "Response is OK"
-                hideProgressBar()
+                try {
+                    loadImage(response)
+                } catch (e: Exception) {
+                    onLoadingError()
+                } finally {
+                    blockForwardButtonCallback.enableForwardButton()
+                }
             },
             {
+                blockForwardButtonCallback.enableForwardButton()
                 onLoadingError()
             }
         )
 
         queue.add(stringRequest)
-
-        // got url
-        // get json
-        // parse json
-        // load image
-        // handle error on each step
     }
 
     private fun getUrl(): String {
@@ -80,8 +93,42 @@ class MainFragment: Fragment(R.layout.main_fragment) {
         return url
     }
 
-    private fun loadImage(url: String) {
+    private fun loadImage(json: String) {
+        val jsonArray = JSONObject(json)["result"] as JSONArray
 
+        // Note: items could potentially be the same
+        val randomIndex = Random.nextInt(jsonArray.length())
+        val randomPost = jsonArray[randomIndex] as JSONObject
+        val postText = randomPost.get("description") as String
+        val gifUrl = randomPost.get("gifURL") as String
+
+        Glide.with(this)
+            .load(gifUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    hideProgressBar()
+                    return false
+                }
+            })
+            .into(mainImage)
+
+        mainText.text = postText
     }
 
     private fun onLoadingError() {
@@ -94,7 +141,7 @@ class MainFragment: Fragment(R.layout.main_fragment) {
 
     private fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
-        mainImage.visibility = View.GONE
+        mainImage.visibility = View.INVISIBLE
         mainText.visibility = View.GONE
     }
 

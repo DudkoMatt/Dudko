@@ -11,7 +11,7 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import com.google.android.material.tabs.TabLayout
 
-class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback {
+class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback, BlockForwardButtonDuringLoad {
     private lateinit var backButton: ImageButton
     private lateinit var forwardButton: ImageButton
     private lateinit var tabLayout: TabLayout
@@ -30,24 +30,10 @@ class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback {
         // Setup onClickListeners
         disableBackButton()
         backButton.setOnClickListener {
-            // ToDO
-            Toast.makeText(applicationContext, "Back - It works!", Toast.LENGTH_SHORT).show()
-            if (currentFragmentIndex == 1) {
-                disableBackButton()
-            }
-
-            val fragment = supportFragmentManager.findFragmentByTag(currentFragmentIndex.toString())
-            if (fragment != null) {
-                supportFragmentManager.commit {
-                    hide(fragment)
-                }
-            }
-            --currentFragmentIndex
+            handleBack()
         }
 
         forwardButton.setOnClickListener {
-            // ToDO
-            Toast.makeText(applicationContext, "Forward - It works!", Toast.LENGTH_SHORT).show()
             loadImage()
             enableBackButton()
         }
@@ -85,12 +71,6 @@ class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback {
 
         // Load image at start
         loadImage()
-
-        // ToDO:
-        //  - Button support
-        //  - Button disabling
-        //  - API support and drawing
-        //  - Error handling
     }
 
     override fun loadImage() {
@@ -104,18 +84,27 @@ class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback {
                 val bundle = bundleOf("category_id" to tabLayout.selectedTabPosition)
                 ++maxFragmentIndex
 
+                val fragmentToHide = supportFragmentManager.findFragmentByTag(currentFragmentIndex.toString())
+                if (fragmentToHide != null) {
+                    supportFragmentManager.commit {
+                        hide(fragmentToHide)
+                    }
+                }
+
                 supportFragmentManager.commit {
                     setReorderingAllowed(true)
-                    add<MainFragment>(R.id.fragmentContainer, args = bundle)
-                    addToBackStack(maxFragmentIndex.toString())
+                    add<MainFragment>(R.id.fragmentContainer, args = bundle, tag = maxFragmentIndex.toString())
+                    addToBackStack(null)
                 }
             }
             currentFragmentIndex < maxFragmentIndex -> {
                 // Show previous from back stack
-                val fragment = supportFragmentManager.findFragmentByTag((currentFragmentIndex + 1).toString())
-                if (fragment != null) {
+                val fragmentToHide = supportFragmentManager.findFragmentByTag(currentFragmentIndex.toString())
+                val fragmentToShow = supportFragmentManager.findFragmentByTag((currentFragmentIndex + 1).toString())
+                if (fragmentToHide != null && fragmentToShow != null) {
                     supportFragmentManager.commit {
-                        show(fragment)
+                        hide(fragmentToHide)
+                        show(fragmentToShow)
                     }
                 }
             }
@@ -128,26 +117,30 @@ class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback {
     }
 
     override fun onBackPressed() {
-        // Disable button if only one will be in stack
-        if (currentFragmentIndex == 1) {
-            disableBackButton()
-        }
-
         // Exit if there's only one left
         if (currentFragmentIndex == 0) {
             finish()
         }
 
-        // Hide top fragment
-        val fragment = supportFragmentManager.findFragmentByTag(currentFragmentIndex.toString())
-        if (fragment != null) {
+        handleBack()
+    }
+
+    private fun handleBack() {
+        // Disable button if only one will be in stack
+        if (currentFragmentIndex == 1) {
+            disableBackButton()
+        }
+
+        // Hide top fragment and show other
+        val fragmentToHide = supportFragmentManager.findFragmentByTag(currentFragmentIndex.toString())
+        val fragmentToShow = supportFragmentManager.findFragmentByTag((currentFragmentIndex - 1).toString())
+        if (fragmentToHide != null && fragmentToShow != null) {
             supportFragmentManager.commit {
-                hide(fragment)
+                hide(fragmentToHide)
+                show(fragmentToShow)
             }
         }
         --currentFragmentIndex
-
-        super.onBackPressed()
     }
 
     fun disableBackButton() {
@@ -158,6 +151,16 @@ class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback {
     fun enableBackButton() {
         backButton.isEnabled = true
 //        TODO() --> цвет кнопки
+    }
+
+    override fun disableForwardButton() {
+        forwardButton.isEnabled = false
+        //        TODO() --> цвет кнопки
+    }
+
+    override fun enableForwardButton() {
+        forwardButton.isEnabled = true
+        //        TODO() --> цвет кнопки
     }
 
     override fun hideButtons() {
