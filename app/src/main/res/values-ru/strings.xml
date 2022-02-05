@@ -6,4 +6,7 @@
     <string name="hot">Горячие</string>
     <string name="back">Назад</string>
     <string name="next">Вперед</string>
+    <string name="cloud">Облако</string>
+    <string name="error_text">Произошла ошибка при загрузке данных. Проверьте подключение к сети.</string>
+    <string name="retry">ПОВТОРИТЬ</string>
 </resources>
