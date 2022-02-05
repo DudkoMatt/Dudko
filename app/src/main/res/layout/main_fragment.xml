@@ -9,6 +9,7 @@
     android:id="@+id/mainFragment">
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/mainImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -17,9 +18,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:src="@color/white"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <TextView
+        android:id="@+id/mainText"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/textview_gradient_main"
@@ -32,4 +36,15 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus" />
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:indeterminate="true"
+        android:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
