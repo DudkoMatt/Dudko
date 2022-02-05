@@ -48,17 +48,18 @@
 
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_margin="@dimen/bottom_button_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/forwardButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_margin="@dimen/bottom_button_margin"
+        android:background="@drawable/round_button"
+        android:contentDescription="@string/back"
         android:elevation="3dp"
         android:src="@drawable/ic_reload"
-        android:contentDescription="@string/back"
-        android:background="@drawable/round_button" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/forwardButton"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/yellow" />
 
     <ImageButton
         android:id="@+id/forwardButton"
@@ -72,7 +73,8 @@
         android:background="@drawable/round_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:elevation="3dp" />
+        android:elevation="3dp"
+        app:tint="@color/green" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"

@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.add
@@ -42,7 +41,6 @@ class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback, B
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab == null) return
-                Toast.makeText(applicationContext, "Tab ${tab.position} selected - It works!", Toast.LENGTH_SHORT).show()
 
                 // Option 1: handle stack of tabLayout indexes for correct undo + error fragment
                 // Handle error fragment
@@ -145,22 +143,22 @@ class MainActivity : AppCompatActivity(), ReloadCallback, HideButtonsCallback, B
 
     fun disableBackButton() {
         backButton.isEnabled = false
-//        TODO() --> цвет кнопки
+        backButton.imageTintList = applicationContext.getColorStateList(R.color.grey)
     }
 
     fun enableBackButton() {
         backButton.isEnabled = true
-//        TODO() --> цвет кнопки
+        backButton.imageTintList = applicationContext.getColorStateList(R.color.yellow)
     }
 
     override fun disableForwardButton() {
         forwardButton.isEnabled = false
-        //        TODO() --> цвет кнопки
+        forwardButton.imageTintList = applicationContext.getColorStateList(R.color.grey)
     }
 
     override fun enableForwardButton() {
         forwardButton.isEnabled = true
-        //        TODO() --> цвет кнопки
+        forwardButton.imageTintList = applicationContext.getColorStateList(R.color.green)
     }
 
     override fun hideButtons() {

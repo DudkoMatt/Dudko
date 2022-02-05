@@ -69,9 +69,8 @@ class MainFragment: Fragment(R.layout.main_fragment) {
                 } catch (e: Exception) {
                     Log.d("Tinkoff-lab", "main -> glide -> error: ${e.message}")
                     Toast.makeText(context, "Error occurred: ${e.message}", Toast.LENGTH_LONG).show()
-                    onLoadingError()
-                } finally {
                     blockForwardButtonCallback.enableForwardButton()
+                    onLoadingError()
                 }
             },
             {
@@ -118,6 +117,7 @@ class MainFragment: Fragment(R.layout.main_fragment) {
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
+                    blockForwardButtonCallback.enableForwardButton()
                     return false
                 }
 
@@ -129,6 +129,7 @@ class MainFragment: Fragment(R.layout.main_fragment) {
                     isFirstResource: Boolean
                 ): Boolean {
                     hideProgressBar()
+                    blockForwardButtonCallback.enableForwardButton()
                     return false
                 }
             })
