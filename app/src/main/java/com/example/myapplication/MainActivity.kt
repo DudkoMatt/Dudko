@@ -8,16 +8,23 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var backButton: ImageButton
+    private lateinit var forwardButton: ImageButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Initialize variables
+        backButton = findViewById(R.id.backButton)
+        forwardButton = findViewById(R.id.forwardButton)
+
         // Setup onClickListeners
-        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+        backButton.setOnClickListener {
             Toast.makeText(applicationContext, "Back - It works!", Toast.LENGTH_LONG).show()
         }
 
-        findViewById<ImageButton>(R.id.forwardButton).setOnClickListener {
+        forwardButton.setOnClickListener {
             Toast.makeText(applicationContext, "Forward - It works!", Toast.LENGTH_LONG).show()
         }
 
